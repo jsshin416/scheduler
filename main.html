@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<meta name ="description" content="My Parse App">
+  <meta name ="viewport" content="width=device-width">
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://npmcdn.com/parse/dist/parse.min.js"> </script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<style type="text/css">
+td,th{
+    width: 60px; 
+    height:60px;
+    font-family: 굴림체;
+    text-align: center;
+    font-size: 20px;
+    border:2px dotted #5F00FF;
+    border-radius:8px;
+    margin:auto;
+  }
+ #log-out{
+  margin-left: auto;
+      margin-right: auto;
+      text-align: center; 
+ }  
+ 
+</style>
+</head>
+
+<body>
+<script type="text/javascript">
+ Parse.initialize("ShinJiSung");
+Parse.serverURL="https://polar-ocean-70851.herokuapp.com/parse"
+//document.wirte(Parse.User.current()+"의 다이어리")</script>
+<h1 align="center">Calender</h1>
+<div align="center"><input id="log-out" type="button" value="로그아웃" onclick="logout()"></div>
+
+<table id="calendar" align="center">
+
+  <thead>
+ <tr>
+      <td><label onclick="prevCalendar()"><</label></td> 
+      <td colspan="5" align="center" id="calendarYM">yyyy년 m월</td>
+      <td><label onclick="nextCalendar()">>
+         
+        </label></td>
+      </tr>
+   </thead> 
+   <tbody id="c_day">
+   <tr style=" font-size: 150%; background-color:#B5B2FF">
+      <th style="color: red">일</th>
+      <th>월</th>
+      <th>화</th>
+      <th>수</th>
+      <th>목</th>
+      <th>금</th>
+      <th style="color: blue">토</th>
+    </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript" src="calender.js"></script>
+<script language="javascript" type="text/javascript">
+  function logout(){
+    Parse.User.logOut();
+    window.location = "signin.html";
+    }
+
+buildCalendar();
+
+</script>
+</body>
+</html>
+ 

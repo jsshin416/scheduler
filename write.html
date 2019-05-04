@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+<meta name ="description" content="My Parse App">
+  <meta name ="viewport" content="width=device-width">
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://npmcdn.com/parse/dist/parse.min.js"> </script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>일정추가,메모장</title>
+<style type="text/css">
+
+  #todolist{
+      border:1px solid #5F00FF;
+      border-radius:8px;
+      width:300px;
+      height:700px;
+       float: left;
+     margin-left: 300px;
+      text-align: center;
+     }
+
+  #text{ 
+      border:2px solid #5F00FF;
+      border-radius:8px;
+      width:550px;
+      height:700px;
+       margin-left: 50px;
+       float: left;
+      text-align: center; 
+     }   
+     textarea{
+      border:2px solid #5F00FF;
+      border-radius:8px;
+      width:500px;
+      height:400px;
+       float: left;
+       margin-left: 20px;
+        margin-right: 20px;
+      
+    
+     }
+
+ .back{
+  background-color: white;
+  border: 1px solid black;
+  margin-top: 25px;
+ }
+ 
+   
+  </style>
+</head>
+<body>
+  <script type="text/javascript">
+ Parse.initialize("ShinJiSung");
+Parse.serverURL="https://polar-ocean-70851.herokuapp.com/parse" </script>
+
+
+
+
+<div id= "todolist">
+    <h2>할 일</h2>
+    <form>
+ <label>
+ <label><div id="pre_set" style="display:none">    
+ <input type="checkbox" id="make" ><label id="demo"></label></label>
+  <input type="button" value="삭제" onclick="remove_item(this)"></div>
+  <div id="field"></div>
+  </form>
+</div>
+
+<div>
+    <form id= "text" > 
+      <h1 align="center">Memo</h1>
+    <p>
+    <tr>
+        <td>날짜를 선택해주세요</td>
+
+        <td>
+
+          <select id="year">
+
+            <option >- 년도 -</option>
+
+          </select>
+
+          <select id="month">
+
+            <option>- 월 -</option>
+
+          </select>
+
+          <select id="day">
+
+            <option>- 일 -</option>
+
+          </select>
+
+          <!-- <input type="text" id="datepicker1"> -->
+
+        </td>
+
+      </tr> 
+    </p>
+
+<textarea id="memo" name="message" rows="15" cols="50" placeholder="여기에 적으세요"></textarea>
+
+<input type="button" class="back" value="뒤로" onclick= "back_m()">
+<input type="button" class="save" value="저장" onclick="save_text()" >
+<input type="button" class="save" value="수정" onclick="modify_text()" >
+
+</form>
+</div>
+
+
+
+
+
+
+<script type="text/javascript" src="calender.js"></script>   
+<script language="javascript" type="text/javascript">
+appendYear();
+appendMonth();
+appendDay();
+get_data();
+
+
+function back_m(){//뒤로가기
+  window.location = "main.html";
+}
+
+function save_text(){//서버에 내용 저장
+var UserId = Parse.Object.extend("User_Diary");
+var userid = new UserId();
+//선택한 날짜 가져오기, 쓴 메모 가져오기
+var Memo = $("#memo").val();
+var s_year = $("#year").val();
+var s_month = $("#month").val();
+var s_day = $("#day").val();
+var s_date =  s_year+'년' + s_month +'월'+ s_day+'일'
+
+//query.addAscending("Year")
+//query.addAscending("Month")
+//query.addAscending("Day")
+
+userid.set("Username",Parse.User.current().get("username"));
+userid.set("Date", s_date);
+userid.set("Memo", Memo);
+userid.save()
+.then((txt)=>{
+  alert("저장되었습니다.");},
+   
+(error)=>{
+ alert(error.message);
+ });
+}
+
+/*function modify_text(){//수정
+
+var Memo = $("#memo").val();
+var s_year = $("#year").val();
+var s_month = $("#month").val();
+var s_day = $("#day").val();
+
+equalTo("Date",s_date)
+//equalTo("Memo",Memo)
+//equalTo()
+query.find()
+
+
+.then(function(data){
+  var PreMemo = data.get("Memo");
+  data.set("Memo", Memo);
+  data.save();
+  var CurMemo = data.get("Memo");
+  var text = s_year+'년' + s_month+'월' + s_day+'일'+ '<br>'+Memo+'</br>'
+document.getElementById("demo").innerHTML = text; 
+add_item();
+ 
+})
+
+}*/
+function add_item(){//체크박스 추가
+    // pre_set 에 있는 내용을 읽어와서 처리..
+    var div = document.createElement('div');
+    div.innerHTML = document.getElementById('pre_set').innerHTML;
+    document.getElementById('field').appendChild(div);
+  }
+
+function get_data(){//서버 메모 가져오기
+  var GetData = Parse.Object.extend("User_Diary");
+  var query = new Parse.Query(GetData);
+  query.equalTo("Username",Parse.User.current().get("username"))
+  query.find()
+  .then(function(datas){
+    for(var i=0; i<datas.length; i++){
+         var data = datas[i];
+        var g_date = data.get("Date");
+        var g_memo = data.get("Memo");
+      document.getElementById("demo").innerHTML = g_date+'<br>'+g_memo+'</dr>'; 
+     add_item();
+    }
+  
+  })
+}
+function remove_item(obj){ //삭제
+    // obj.parentNode 를 이용하여 삭제
+document.getElementById('field').removeChild(obj.parentNode);
+
+/*var Memo = $("#memo").val();
+var s_year = $("#year").val();
+var s_month = $("#month").val();
+var s_day = $("#day").val();
+var s_date =  s_year+'년' + s_month +'월'+ s_day+'일'
+
+var GetData = Parse.Object.extend("User_Diary");
+var query = new Parse.Query(GetData);
+query.equalTo("Date", $("#demo").g_date)
+query.equalTo("Memo", $("#demo").g_memo)
+query.find()
+
+ testObject.destroy.then((testObject)=>{
+
+});  */
+
+}
+
+ </script>
+</body>
+</html>
+
+ 
